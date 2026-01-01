@@ -22,8 +22,8 @@ const portfolioCategories: PortfolioCategory[] = [
     title: 'Bridal Makeup',
     folder: '/assets/portfolio/bridal/',
     subCategories: [
-      { id: 'hindu', title: 'Hindu Bridal', folder: '/assets/portfolio/bridal/hindu', count: 2 },
-      { id: 'muslim', title: 'Muslim Bridal', folder: '/assets/portfolio/bridal/muslim', count: 0 },
+      { id: 'hindu', title: 'Hindu Bridal', folder: '/assets/portfolio/bridal/hindu', count: 1 },
+      { id: 'muslim', title: 'Muslim Bridal', folder: '/assets/portfolio/bridal/muslim', count: 1 },
       { id: 'christian', title: 'Christian Bridal', folder: '/assets/portfolio/bridal/christian', count: 3 },
       { id: 'north-indian', title: 'North Indian Bridal', folder: '/assets/portfolio/bridal/north-indian', count: 1 },
     ],
