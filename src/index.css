@@ -1,0 +1,345 @@
+/* Divine Touch Bridal Makeover - Luxury Design System */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Montserrat:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+
+@layer base {
+  :root {
+    /* Luxury Bridal Color Palette */
+    --background: 40 33% 98%;
+    --foreground: 30 20% 15%;
+
+    --card: 40 30% 97%;
+    --card-foreground: 30 20% 15%;
+
+    --popover: 40 30% 97%;
+    --popover-foreground: 30 20% 15%;
+
+    /* Champagne Gold Primary */
+    --primary: 38 60% 55%;
+    --primary-foreground: 40 33% 98%;
+
+    /* Warm Beige Secondary */
+    --secondary: 35 30% 90%;
+    --secondary-foreground: 30 25% 25%;
+
+    /* Soft Ivory Muted */
+    --muted: 40 20% 94%;
+    --muted-foreground: 30 15% 45%;
+
+    /* Gold Accent */
+    --accent: 38 70% 50%;
+    --accent-foreground: 40 33% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 35 25% 85%;
+    --input: 35 25% 88%;
+    --ring: 38 60% 55%;
+
+    --radius: 0.5rem;
+
+    /* Custom Luxury Tokens */
+    --gold: 38 70% 50%;
+    --gold-light: 40 60% 75%;
+    --gold-dark: 35 65% 35%;
+    --champagne: 40 45% 85%;
+    --ivory: 45 40% 96%;
+    --warm-brown: 25 35% 30%;
+    --beige: 35 30% 90%;
+    --cream: 42 35% 93%;
+
+    /* Gradients */
+    --gradient-gold: linear-gradient(135deg, hsl(38, 70%, 50%) 0%, hsl(35, 65%, 35%) 100%);
+    --gradient-champagne: linear-gradient(180deg, hsl(40, 45%, 85%) 0%, hsl(40, 33%, 98%) 100%);
+    --gradient-hero: linear-gradient(180deg, hsla(30, 20%, 15%, 0.7) 0%, hsla(35, 40%, 25%, 0.5) 50%, hsla(38, 50%, 40%, 0.3) 100%);
+    --gradient-overlay: linear-gradient(135deg, hsla(30, 20%, 15%, 0.6) 0%, hsla(38, 60%, 55%, 0.3) 100%);
+
+    /* Shadows */
+    --shadow-soft: 0 4px 20px -4px hsla(38, 70%, 50%, 0.15);
+    --shadow-gold: 0 8px 30px -8px hsla(38, 70%, 50%, 0.25);
+    --shadow-elegant: 0 20px 50px -15px hsla(30, 20%, 15%, 0.15);
+
+    /* Typography */
+    --font-serif: 'Cormorant Garamond', Georgia, serif;
+    --font-sans: 'Montserrat', system-ui, sans-serif;
+
+    /* Sidebar */
+    --sidebar-background: 40 30% 97%;
+    --sidebar-foreground: 30 20% 25%;
+    --sidebar-primary: 38 60% 55%;
+    --sidebar-primary-foreground: 40 33% 98%;
+    --sidebar-accent: 35 30% 92%;
+    --sidebar-accent-foreground: 30 25% 25%;
+    --sidebar-border: 35 25% 85%;
+    --sidebar-ring: 38 60% 55%;
+  }
+
+  .dark {
+    --background: 30 20% 8%;
+    --foreground: 40 30% 95%;
+
+    --card: 30 20% 10%;
+    --card-foreground: 40 30% 95%;
+
+    --popover: 30 20% 10%;
+    --popover-foreground: 40 30% 95%;
+
+    --primary: 38 60% 55%;
+    --primary-foreground: 30 20% 8%;
+
+    --secondary: 30 20% 15%;
+    --secondary-foreground: 40 30% 95%;
+
+    --muted: 30 15% 18%;
+    --muted-foreground: 35 20% 60%;
+
+    --accent: 38 70% 50%;
+    --accent-foreground: 30 20% 8%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 40 30% 95%;
+
+    --border: 30 15% 20%;
+    --input: 30 15% 20%;
+    --ring: 38 60% 55%;
+
+    --sidebar-background: 30 20% 10%;
+    --sidebar-foreground: 40 30% 95%;
+    --sidebar-primary: 38 60% 55%;
+    --sidebar-primary-foreground: 30 20% 8%;
+    --sidebar-accent: 30 15% 15%;
+    --sidebar-accent-foreground: 40 30% 95%;
+    --sidebar-border: 30 15% 20%;
+    --sidebar-ring: 38 60% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+  }
+}
+
+@layer components {
+  .font-serif {
+    font-family: var(--font-serif);
+  }
+
+  .font-sans {
+    font-family: var(--font-sans);
+  }
+
+  .text-gold {
+    color: hsl(var(--gold));
+  }
+
+  .bg-gold {
+    background-color: hsl(var(--gold));
+  }
+
+  .bg-champagne {
+    background-color: hsl(var(--champagne));
+  }
+
+  .bg-ivory {
+    background-color: hsl(var(--ivory));
+  }
+
+  .bg-cream {
+    background-color: hsl(var(--cream));
+  }
+
+  .gradient-gold {
+    background: var(--gradient-gold);
+  }
+
+  .gradient-hero {
+    background: var(--gradient-hero);
+  }
+
+  .gradient-overlay {
+    background: var(--gradient-overlay);
+  }
+
+  .shadow-gold {
+    box-shadow: var(--shadow-gold);
+  }
+
+  .shadow-elegant {
+    box-shadow: var(--shadow-elegant);
+  }
+
+  /* Grain texture overlay */
+  .grain-texture {
+    position: relative;
+  }
+
+  .grain-texture::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+    opacity: 0.03;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* Luxury underline animation */
+  .gold-underline {
+    position: relative;
+  }
+
+  .gold-underline::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--gradient-gold);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(-50%);
+  }
+
+  .gold-underline:hover::after {
+    width: 100%;
+  }
+
+  /* Smooth image zoom */
+  .image-zoom {
+    overflow: hidden;
+  }
+
+  .image-zoom img {
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .image-zoom:hover img {
+    transform: scale(1.08);
+  }
+
+  /* Gold overlay on hover */
+  .gold-overlay {
+    position: relative;
+  }
+
+  .gold-overlay::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: hsla(38, 70%, 50%, 0);
+    transition: background 0.4s ease;
+  }
+
+  .gold-overlay:hover::after {
+    background: hsla(38, 70%, 50%, 0.2);
+  }
+
+  /* WhatsApp pulse animation */
+  .pulse-gold {
+    animation: pulse-gold 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  @keyframes pulse-gold {
+    0%, 100% {
+      box-shadow: 0 0 0 0 hsla(38, 70%, 50%, 0.4);
+    }
+    50% {
+      box-shadow: 0 0 0 15px hsla(38, 70%, 50%, 0);
+    }
+  }
+}
+
+@layer utilities {
+  /* Staggered fade up animation */
+  .animate-fade-up {
+    animation: fadeUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    opacity: 0;
+  }
+
+  .animate-fade-up-delay-1 {
+    animation-delay: 0.1s;
+  }
+
+  .animate-fade-up-delay-2 {
+    animation-delay: 0.2s;
+  }
+
+  .animate-fade-up-delay-3 {
+    animation-delay: 0.3s;
+  }
+
+  .animate-fade-up-delay-4 {
+    animation-delay: 0.4s;
+  }
+
+  @keyframes fadeUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Scale in animation */
+  .animate-scale-in {
+    animation: scaleIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    opacity: 0;
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  /* Parallax slow movement */
+  .parallax-slow {
+    animation: parallaxSlow 25s ease-in-out infinite alternate;
+  }
+
+  @keyframes parallaxSlow {
+    from {
+      transform: scale(1.05) translateY(-2%);
+    }
+    to {
+      transform: scale(1.05) translateY(2%);
+    }
+  }
+
+  /* Letter spacing utilities */
+  .tracking-luxury {
+    letter-spacing: 0.3em;
+  }
+
+  .tracking-wide-luxury {
+    letter-spacing: 0.15em;
+  }
+}
