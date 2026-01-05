@@ -4,7 +4,7 @@
 
 **Brand**: Divine Touch  
 **Type**: Premium Bridal Makeup Website  
-**Live URL**: https://divine-touch-website-hy624j4r-sendhil-balans-projects.vercel.app
+**Live URL**: www.divinetouch.beauty
 
 ---
 
