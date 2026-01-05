@@ -13,7 +13,6 @@ const Header = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Prevent body scroll when menu is open
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden';
@@ -36,10 +35,10 @@ const Header = () => {
   return (
     <>
       <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ease-out ${
           isScrolled
-            ? 'bg-background/95 backdrop-blur-md shadow-elegant py-2'
-            : 'bg-foreground/80 backdrop-blur-sm py-2'
+            ? 'bg-background/95 backdrop-blur-md shadow-elegant py-3'
+            : 'bg-foreground/80 backdrop-blur-sm py-4'
         }`}
       >
         <div className="container mx-auto px-4">
@@ -67,28 +66,42 @@ const Header = () => {
             {/* Logo + Brand Name */}
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="flex items-center gap-2 md:absolute md:left-1/2 md:-translate-x-1/2"
+              className="flex items-center gap-3 md:absolute md:left-1/2 md:-translate-x-1/2"
             >
               <div
-                className={`rounded-full overflow-hidden border border-primary/40 transition-all duration-300 ${
-                  isScrolled ? 'w-9 h-9 md:w-11 md:h-11' : 'w-10 h-10 md:w-12 md:h-12'
+                className={`relative rounded-full overflow-hidden border-2 transition-all duration-500 ${
+                  isScrolled 
+                    ? 'w-10 h-10 md:w-12 md:h-12 border-primary/30' 
+                    : 'w-11 h-11 md:w-14 md:h-14 border-background/40'
                 }`}
               >
                 <img
                   src="/assets/logo/logo.png"
-                  alt="Divine Touch"
-                  className="w-full h-full object-contain"
+                  alt="Divine Touch Logo"
+                  className={`w-full h-full object-contain transition-all duration-500 ${
+                    isScrolled ? '' : 'invert brightness-0' // White logo on dark header
+                  }`}
                 />
               </div>
-              <span className={`font-allura text-xl md:text-2xl transition-colors ${
-                isScrolled ? 'text-foreground' : 'text-background'
-              }`}>
+              <span
+                className={`font-allura text-2xl md:text-3xl transition-colors duration-500 ${
+                  isScrolled ? 'text-foreground' : 'text-background'
+                }`}
+              >
                 Divine Touch
               </span>
             </button>
 
             {/* Right Navigation - Desktop */}
-            <div className="hidden md:flex items-center gap-6">
+            <div className="hidden md:flex items-center gap-8">
+              <button
+                onClick={() => scrollToSection('pricing')}
+                className={`font-sans text-sm tracking-wide-luxury uppercase transition-colors gold-underline ${
+                  isScrolled ? 'text-foreground/80 hover:text-primary' : 'text-background/90 hover:text-primary'
+                }`}
+              >
+                Pricing
+              </button>
               <button
                 onClick={() => scrollToSection('booking')}
                 className={`font-sans text-sm tracking-wide-luxury uppercase transition-colors gold-underline ${
@@ -99,9 +112,11 @@ const Header = () => {
               </button>
               <a
                 href="tel:+918015295196"
-                className="flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+                className={`flex items-center gap-2 text-sm font-medium transition-colors ${
+                  isScrolled ? 'text-primary hover:text-primary/80' : 'text-background/90 hover:text-background'
+                }`}
               >
-                <Phone className="w-4 h-4" />
+                <Phone className="w-5 h-5" />
                 <span className="font-sans">+91 80152 95196</span>
               </a>
             </div>
@@ -112,7 +127,11 @@ const Header = () => {
               onClick={() => setIsMobileMenuOpen(true)}
               aria-label="Open menu"
             >
-              <Menu className={`w-6 h-6 ${isScrolled ? 'text-foreground' : 'text-background'}`} />
+              <Menu 
+                className={`w-6 h-6 transition-colors duration-300 ${
+                  isScrolled ? 'text-foreground' : 'text-background'
+                }`} 
+              />
             </button>
           </nav>
         </div>
@@ -121,15 +140,11 @@ const Header = () => {
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-[60] md:hidden">
-          {/* Backdrop */}
           <div 
             className="absolute inset-0 bg-foreground/60 backdrop-blur-sm"
             onClick={() => setIsMobileMenuOpen(false)}
           />
-          
-          {/* Menu Panel */}
           <div className="absolute top-0 right-0 h-full w-72 max-w-[80vw] bg-background shadow-2xl animate-slide-in-right">
-            {/* Header with Close Button */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-border/50">
               <span className="font-serif text-lg text-foreground">Menu</span>
               <button
@@ -141,48 +156,19 @@ const Header = () => {
               </button>
             </div>
 
-            {/* Menu Items */}
             <nav className="px-4 py-3">
               <div className="space-y-1">
-                <button
-                  onClick={() => scrollToSection('services')}
-                  className="flex items-center w-full text-left py-3.5 px-4 font-sans text-base text-foreground hover:text-primary hover:bg-muted/50 rounded-lg transition-colors active:scale-[0.98]"
-                >
-                  Services
-                </button>
-                <button
-                  onClick={() => scrollToSection('portfolio')}
-                  className="flex items-center w-full text-left py-3.5 px-4 font-sans text-base text-foreground hover:text-primary hover:bg-muted/50 rounded-lg transition-colors active:scale-[0.98]"
-                >
-                  Portfolio
-                </button>
-                <button
-                  onClick={() => scrollToSection('testimonials')}
-                  className="flex items-center w-full text-left py-3.5 px-4 font-sans text-base text-foreground hover:text-primary hover:bg-muted/50 rounded-lg transition-colors active:scale-[0.98]"
-                >
-                  Testimonials
-                </button>
-                <button
-                  onClick={() => scrollToSection('booking')}
-                  className="flex items-center w-full text-left py-3.5 px-4 font-sans text-base text-foreground hover:text-primary hover:bg-muted/50 rounded-lg transition-colors active:scale-[0.98]"
-                >
-                  Book Appointment
-                </button>
-                <button
-                  onClick={() => scrollToSection('faq')}
-                  className="flex items-center w-full text-left py-3.5 px-4 font-sans text-base text-foreground hover:text-primary hover:bg-muted/50 rounded-lg transition-colors active:scale-[0.98]"
-                >
-                  FAQ
-                </button>
-                <button
-                  onClick={() => scrollToSection('contact')}
-                  className="flex items-center w-full text-left py-3.5 px-4 font-sans text-base text-foreground hover:text-primary hover:bg-muted/50 rounded-lg transition-colors active:scale-[0.98]"
-                >
-                  Contact
-                </button>
+                {['services', 'portfolio', 'pricing', 'testimonials', 'booking', 'faq', 'contact'].map((section) => (
+                  <button
+                    key={section}
+                    onClick={() => scrollToSection(section)}
+                    className="flex items-center w-full text-left py-3.5 px-4 font-sans text-base text-foreground hover:text-primary hover:bg-muted/50 rounded-lg transition-colors active:scale-[0.98]"
+                  >
+                    {section.charAt(0).toUpperCase() + section.slice(1).replace('booking', 'Book Appointment')}
+                  </button>
+                ))}
               </div>
 
-              {/* CTA */}
               <div className="mt-6 pt-4 border-t border-border/50">
                 <a
                   href="tel:+918015295196"

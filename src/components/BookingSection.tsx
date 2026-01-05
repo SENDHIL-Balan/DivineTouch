@@ -25,6 +25,12 @@ const months = [
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
+const districts = [
+  'Chennai',
+  'Cuddalore', 
+  'Pondicherry'
+];
+
 const BookingSection = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,6 +42,7 @@ const BookingSection = () => {
     phone: '',
     email: '',
     service: '',
+    district: '',
     year: '',
     month: '',
     date: '',
@@ -69,7 +76,7 @@ const BookingSection = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name || !formData.phone || !formData.service || !formData.year || !formData.month || !formData.date) {
+    if (!formData.name || !formData.phone || !formData.service || !formData.district || !formData.year || !formData.month || !formData.date) {
       toast.error('Please fill in all required fields');
       return;
     }
@@ -83,6 +90,7 @@ const BookingSection = () => {
           clientPhone: formData.phone,
           clientEmail: formData.email,
           service: formData.service,
+          district: formData.district,
           year: formData.year,
           month: formData.month,
           date: formData.date,
@@ -92,7 +100,7 @@ const BookingSection = () => {
       if (error) throw error;
 
       setIsSuccess(true);
-      setFormData({ name: '', phone: '', email: '', service: '', year: '', month: '', date: '' });
+      setFormData({ name: '', phone: '', email: '', service: '', district: '', year: '', month: '', date: '' });
       toast.success('Booking request sent successfully!');
     } catch (error) {
       console.error('Booking error:', error);
@@ -139,6 +147,10 @@ const BookingSection = () => {
             }`}
           >
             Schedule your bridal consultation today. Fill in your details and we'll confirm your appointment.
+          </p>
+
+          <p className="font-sans text-xs text-primary-foreground/60 text-center mb-6">
+            Note: Services available only in Chennai, Cuddalore & Pondicherry districts
           </p>
 
           {isSuccess ? (
@@ -234,9 +246,32 @@ const BookingSection = () => {
                 </Select>
               </div>
 
+              {/* District */}
+              <div className="space-y-1.5">
+                <Label className="text-primary-foreground/80 text-sm">Select District *</Label>
+                <Select
+                  value={formData.district}
+                  onValueChange={(value) => setFormData({ ...formData, district: value })}
+                >
+                  <SelectTrigger className="h-12 bg-background/10 border-primary/20 text-primary-foreground focus:border-primary">
+                    <SelectValue placeholder="Select your district" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {districts.map((district) => (
+                      <SelectItem key={district} value={district}>
+                        {district}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="font-sans text-xs text-primary-foreground/60 pt-1">
+                  Services available only in these districts
+                </p>
+              </div>
+
               {/* Date Selection - Year, Month, Date */}
               <div className="space-y-1.5">
-                <Label className="text-primary-foreground/80 text-sm">Preferred Date *</Label>
+                <Label className="text-primary-foreground/80 text-sm">Appointment Date *</Label>
                 <div className="grid grid-cols-3 gap-2">
                   <Select
                     value={formData.year}

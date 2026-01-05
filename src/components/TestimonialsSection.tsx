@@ -3,7 +3,7 @@ import { Star, Quote } from 'lucide-react';
 
 const testimonials = [
   {
-    name: 'Kavya dharshni',
+    name: 'Kavya Dharshni',
     event: 'Bridal Makeup',
     text: 'Absolutely stunning work! My bridal makeup was flawless and lasted throughout my wedding day. Divine Touch truly made me feel like a princess.',
     rating: 5,
@@ -32,12 +32,67 @@ const TestimonialsSection = () => {
   const [isVisible, setIsVisible] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const animationRef = useRef<number | null>(null);
+  const isUserInteracting = useRef(false);
+  const resumeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const SPEED = 0.5; // Adjust speed here (higher = faster)
+
+  const animate = () => {
+    if (!scrollRef.current || isUserInteracting.current) return;
+
+    scrollRef.current.scrollLeft += SPEED;
+
+    // Seamless loop
+    if (scrollRef.current.scrollLeft >= scrollRef.current.scrollWidth / 2) {
+      scrollRef.current.scrollLeft = 0;
+    }
+
+    animationRef.current = requestAnimationFrame(animate);
+  };
+
+  const startAnimation = () => {
+    stopAnimation();
+    animationRef.current = requestAnimationFrame(animate);
+  };
+
+  const stopAnimation = () => {
+    if (animationRef.current) {
+      cancelAnimationFrame(animationRef.current);
+      animationRef.current = null;
+    }
+  };
+
+  const handleUserStart = () => {
+    isUserInteracting.current = true;
+    stopAnimation();
+
+    // Clear any pending resume
+    if (resumeTimeoutRef.current) {
+      clearTimeout(resumeTimeoutRef.current);
+    }
+  };
+
+  const handleUserEnd = () => {
+    isUserInteracting.current = false;
+
+    // Resume auto-scroll after 3 seconds of no interaction
+    resumeTimeoutRef.current = setTimeout(() => {
+      if (!isUserInteracting.current && isVisible) {
+        startAnimation();
+      }
+    }, 3000);
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
           setIsVisible(true);
+          startAnimation();
+        } else {
+          setIsVisible(false);
+          stopAnimation();
         }
       },
       { threshold: 0.1 }
@@ -47,48 +102,34 @@ const TestimonialsSection = () => {
       observer.observe(sectionRef.current);
     }
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      stopAnimation();
+      if (resumeTimeoutRef.current) clearTimeout(resumeTimeoutRef.current);
+    };
   }, []);
 
-  // Auto-scroll effect - vertical on mobile concepts but horizontal here
+  // Touch & mouse interaction handlers
   useEffect(() => {
-    const scrollContainer = scrollRef.current;
-    if (!scrollContainer) return;
+    const container = scrollRef.current;
+    if (!container) return;
 
-    let animationId: number;
-    let scrollPosition = 0;
-    const scrollSpeed = 0.3;
-
-    const autoScroll = () => {
-      scrollPosition += scrollSpeed;
-      if (scrollPosition >= scrollContainer.scrollWidth / 2) {
-        scrollPosition = 0;
-      }
-      scrollContainer.scrollLeft = scrollPosition;
-      animationId = requestAnimationFrame(autoScroll);
-    };
-
-    animationId = requestAnimationFrame(autoScroll);
-
-    const handleTouch = () => cancelAnimationFrame(animationId);
-    const handleTouchEnd = () => {
-      scrollPosition = scrollContainer.scrollLeft;
-      animationId = requestAnimationFrame(autoScroll);
-    };
-
-    scrollContainer.addEventListener('touchstart', handleTouch);
-    scrollContainer.addEventListener('touchend', handleTouchEnd);
-    scrollContainer.addEventListener('mouseenter', handleTouch);
-    scrollContainer.addEventListener('mouseleave', handleTouchEnd);
+    container.addEventListener('touchstart', handleUserStart, { passive: true });
+    container.addEventListener('touchend', handleUserEnd);
+    container.addEventListener('touchcancel', handleUserEnd);
+    container.addEventListener('mousedown', handleUserStart);
+    container.addEventListener('mouseup', handleUserEnd);
+    container.addEventListener('mouseleave', handleUserEnd);
 
     return () => {
-      cancelAnimationFrame(animationId);
-      scrollContainer.removeEventListener('touchstart', handleTouch);
-      scrollContainer.removeEventListener('touchend', handleTouchEnd);
-      scrollContainer.removeEventListener('mouseenter', handleTouch);
-      scrollContainer.removeEventListener('mouseleave', handleTouchEnd);
+      container.removeEventListener('touchstart', handleUserStart);
+      container.removeEventListener('touchend', handleUserEnd);
+      container.removeEventListener('touchcancel', handleUserEnd);
+      container.removeEventListener('mousedown', handleUserStart);
+      container.removeEventListener('mouseup', handleUserEnd);
+      container.removeEventListener('mouseleave', handleUserEnd);
     };
-  }, []);
+  }, [isVisible]);
 
   return (
     <section
@@ -97,61 +138,69 @@ const TestimonialsSection = () => {
       className="py-12 md:py-20 bg-champagne/30 grain-texture relative overflow-hidden"
     >
       <div className="container mx-auto px-4 relative z-10">
-        {/* Section Header */}
-        <div className="text-center mb-10">
+        {/* Header */}
+        <div className="text-center mb-12">
           <p
-            className={`font-sans text-xs tracking-luxury uppercase text-primary mb-3 transition-all duration-700 ${
+            className={`font-sans text-xs tracking-luxury uppercase text-primary mb-3 transition-all duration-1000 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             }`}
           >
             What They Say
           </p>
           <h2
-            className={`font-serif text-2xl md:text-4xl text-foreground transition-all duration-700 delay-100 ${
+            className={`font-serif text-2xl md:text-4xl text-foreground transition-all duration-1000 delay-100 ${
               isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
             }`}
           >
             Client Testimonials
           </h2>
           <div
-            className={`w-16 h-0.5 gradient-gold mx-auto mt-4 transition-all duration-700 delay-200 ${
-              isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'
+            className={`w-16 h-0.5 gradient-gold mx-auto mt-4 transition-all duration-1000 delay-200 ${
+              isVisible ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'
             }`}
           />
         </div>
 
-        {/* Testimonials Scroll */}
+        {/* Moving Testimonials */}
         <div
           ref={scrollRef}
-          className="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide"
+          className="flex gap-6 overflow-x-auto scrollbar-hide snap-x"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {[...testimonials, ...testimonials].map((testimonial, index) => (
             <div
               key={index}
-              className={`flex-shrink-0 w-72 md:w-80 bg-background/90 backdrop-blur-sm p-6 rounded-sm border border-border/50 transition-all duration-700 ${
+              className={`flex-shrink-0 w-80 md:w-96 snap-start bg-background/90 backdrop-blur-sm p-8 rounded-sm border border-border/50 shadow-lg transition-all duration-1000 ${
                 isVisible
                   ? 'opacity-100 translate-y-0'
-                  : 'opacity-0 translate-y-8'
+                  : 'opacity-0 translate-y-10'
               }`}
-              style={{ transitionDelay: `${200 + (index % 4) * 80}ms` }}
+              style={{ transitionDelay: `${index * 100}ms` }}
             >
-              <Quote className="w-6 h-6 text-primary/30 mb-3" />
-              
-              {/* Stars */}
-              <div className="flex gap-0.5 mb-3">
-                {[...Array(testimonial.rating)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 fill-primary text-primary" />
+              <Quote className="w-10 h-10 text-primary/20 mb-6" />
+
+              <div className="flex gap-1 mb-6">
+                {[...Array(5)].map((_, i) => (
+                  <Star
+                    key={i}
+                    className={`w-5 h-5 ${
+                      i < testimonial.rating
+                        ? 'fill-primary text-primary'
+                        : 'text-muted/30'
+                    }`}
+                  />
                 ))}
               </div>
 
-              <p className="font-sans text-sm text-muted-foreground leading-relaxed mb-4 line-clamp-4">
+              <p className="font-sans text-base text-muted-foreground leading-relaxed mb-8 italic">
                 "{testimonial.text}"
               </p>
 
-              <div className="border-t border-border/50 pt-3">
-                <p className="font-serif text-base text-foreground">{testimonial.name}</p>
-                <p className="font-sans text-xs text-primary uppercase tracking-wide">
+              <div className="border-t border-border/30 pt-6">
+                <p className="font-serif text-xl text-foreground">
+                  {testimonial.name}
+                </p>
+                <p className="font-sans text-sm text-primary uppercase tracking-wider mt-1">
                   {testimonial.event}
                 </p>
               </div>

@@ -2,6 +2,7 @@ import Header from '@/components/Header';
 import HeroSection from '@/components/HeroSection';
 import ServicesSection from '@/components/ServicesSection';
 import PortfolioSection from '@/components/PortfolioSection';
+import PricingSection from '@/components/PricingSection';
 import TestimonialsSection from '@/components/TestimonialsSection';
 import BookingSection from '@/components/BookingSection';
 import FAQSection from '@/components/FAQSection';
@@ -9,7 +10,6 @@ import ContactSection from '@/components/ContactSection';
 import Footer from '@/components/Footer';
 import WhatsAppButton from '@/components/WhatsAppButton';
 import { Helmet } from 'react-helmet-async';
-
 
 const Index = () => {
   return (
@@ -31,7 +31,7 @@ const Index = () => {
         />
         <meta property="og:type" content="website" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-        <link rel="canonical" href="https://divinetouch.beauty" />
+        <link rel="canonical" href="https://divinetouch.com" />
       </Helmet>
 
       <main className="min-h-screen bg-background overflow-x-hidden">
@@ -39,14 +39,13 @@ const Index = () => {
         <HeroSection />
         <ServicesSection />
         <PortfolioSection />
+        <PricingSection />
         <TestimonialsSection />
         <BookingSection />
         <FAQSection />
         <ContactSection />
         <Footer />
         <WhatsAppButton />
-        
-
       </main>
     </>
   );

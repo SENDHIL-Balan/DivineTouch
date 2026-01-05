@@ -76,7 +76,7 @@ const handler = async (req: Request): Promise<Response> => {
                 <span class="detail-value">${service}</span>
               </div>
               <div class="detail-row">
-                <span class="detail-label">Preferred Date:</span>
+                <span class="detail-label">Appointment Date:</span>
                 <span class="detail-value">${date} ${month}, ${year}</span>
               </div>
             </div>

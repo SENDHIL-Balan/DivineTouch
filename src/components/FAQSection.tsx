@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { HelpCircle } from 'lucide-react';
 import {
   Accordion,
@@ -43,80 +43,36 @@ const faqs = [
 ];
 
 const FAQSection = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
   return (
-    <section
-      id="faq"
-      ref={sectionRef}
-      className="py-12 md:py-20 bg-ivory grain-texture relative"
-    >
-      <div className="container mx-auto px-4 relative z-10">
-        {/* Section Header */}
+    <section id="faq" className="py-12 md:py-20 bg-ivory">
+      <div className="container mx-auto px-4">
+        {/* Section Header - NO ANIMATIONS */}
         <div className="text-center mb-10">
-          <div
-            className={`w-12 h-12 mx-auto rounded-full bg-secondary flex items-center justify-center mb-4 transition-all duration-700 ${
-              isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-75'
-            }`}
-          >
+          <div className="w-12 h-12 mx-auto rounded-full bg-secondary flex items-center justify-center mb-4">
             <HelpCircle className="w-6 h-6 text-primary" />
           </div>
-          <p
-            className={`font-sans text-xs tracking-luxury uppercase text-primary mb-3 transition-all duration-700 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            }`}
-          >
+          <p className="font-sans text-xs tracking-luxury uppercase text-primary mb-3">
             Questions & Answers
           </p>
-          <h2
-            className={`font-serif text-2xl md:text-4xl text-foreground transition-all duration-700 delay-100 ${
-              isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'
-            }`}
-          >
+          <h2 className="font-serif text-2xl md:text-4xl text-foreground">
             Frequently Asked Questions
           </h2>
-          <div
-            className={`w-16 h-0.5 gradient-gold mx-auto mt-4 transition-all duration-700 delay-200 ${
-              isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-0'
-            }`}
-          />
+          <div className="w-16 h-0.5 gradient-gold mx-auto mt-4" />
         </div>
 
-        {/* FAQ Accordion */}
-        <div
-          className={`max-w-2xl mx-auto transition-all duration-700 delay-300 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-          }`}
-        >
+        {/* FAQ Accordion - SIMPLE & FAST */}
+        <div className="max-w-2xl mx-auto">
           <Accordion type="single" collapsible className="space-y-3">
             {faqs.map((faq, index) => (
               <AccordionItem
                 key={index}
                 value={`item-${index}`}
-                className="bg-background/80 backdrop-blur-sm border border-border/50 rounded-sm px-4 md:px-6 data-[state=open]:border-primary/30 data-[state=open]:shadow-gold transition-all duration-300"
+                className="bg-white border border-gray-200 rounded-sm px-4 md:px-6"
               >
-                <AccordionTrigger className="text-left font-serif text-sm md:text-base text-foreground hover:text-primary py-4 [&[data-state=open]]:text-primary">
+                <AccordionTrigger className="text-left font-serif text-sm md:text-base text-gray-800 hover:text-primary py-4 data-[state=open]:text-primary">
                   {faq.question}
                 </AccordionTrigger>
-                <AccordionContent className="font-sans text-sm text-muted-foreground leading-relaxed pb-4">
+                <AccordionContent className="font-sans text-sm text-gray-600 leading-relaxed pb-4">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>
@@ -125,12 +81,7 @@ const FAQSection = () => {
         </div>
 
         {/* Contact CTA */}
-        <p
-          className={`text-center font-sans text-sm text-muted-foreground mt-8 transition-all duration-700 ${
-            isVisible ? 'opacity-100' : 'opacity-0'
-          }`}
-          style={{ transitionDelay: '600ms' }}
-        >
+        <p className="text-center font-sans text-sm text-gray-600 mt-8">
           Have more questions?{' '}
           <a
             href="https://wa.me/918015295196"
