@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Check, Sparkles, Crown, Star, Zap, Rocket, Gift, Award } from 'lucide-react';
+import { Check, Sparkles, Crown, Star, Zap, Rocket, Gift } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const packages = [
@@ -17,7 +17,7 @@ const packages = [
     ],
     popular: false,
     highlight: 'BEST VALUE',
-    glowColor: 'from-blue-400/40 via-indigo-500/50 to-purple-400/40', // Blue/Purple glow
+    glowColor: 'from-blue-400/40 via-indigo-500/50 to-purple-400/40',
   },
   {
     name: 'Premium Bridal',
@@ -35,7 +35,7 @@ const packages = [
     ],
     popular: true,
     highlight: 'MOST POPULAR',
-    glowColor: 'from-amber-400/40 via-amber-500/50 to-amber-400/40', // Amber glow
+    glowColor: 'from-amber-400/40 via-amber-500/50 to-amber-400/40',
   }
 ];
 
@@ -49,23 +49,32 @@ const addOns = [
 ];
 
 const PricingSection = () => {
-  const [isVisible, setIsVisible] = useState(false);
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
+  const [visibleElements, setVisibleElements] = useState<Set<string>>(new Set());
   const sectionRef = useRef<HTMLElement>(null);
+  const cardsRef = useRef<HTMLDivElement>(null);
+  const addOnsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const id = entry.target.getAttribute('data-animate-id');
+            if (id) {
+              setVisibleElements(prev => new Set([...prev, id]));
+            }
+          }
+        });
       },
-      { threshold: 0.1, rootMargin: '50px' }
+      { 
+        threshold: 0.2,
+        rootMargin: '0px 0px -100px 0px' // Triggers slightly before viewport
+      }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
+    // Observe all animated elements
+    const animatedElements = document.querySelectorAll('[data-animate-id]');
+    animatedElements.forEach(el => observer.observe(el));
 
     return () => observer.disconnect();
   }, []);
@@ -80,203 +89,222 @@ const PricingSection = () => {
     <section
       id="pricing"
       ref={sectionRef}
-      className="py-12 md:py-20 bg-champagne/30 relative overflow-hidden"
+      className="py-16 md:py-24 bg-gradient-to-b from-champagne/20 via-champagne/10 to-champagne/30 relative overflow-hidden"
     >
-      {/* Subtle animated background */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2 animate-pulse"></div>
-        <div className="absolute bottom-0 right-0 w-80 h-80 bg-primary/8 rounded-full blur-3xl translate-x-1/3 translate-y-1/3 animate-pulse delay-1000"></div>
-      </div>
-
       <div className="container mx-auto px-4 relative z-10">
-        {/* Section Header - Faster fade-in */}
-        <div className="text-center mb-10 md:mb-14">
-          <p className={`font-sans text-xs tracking-luxury uppercase text-primary mb-3 transition-all duration-500 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}>
-            Investment in Beauty
-          </p>
-          <h2 className={`font-serif text-2xl md:text-4xl lg:text-5xl text-foreground transition-all duration-600 ease-out delay-75 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            Bridal Packages
+        {/* Section Header - Appears first */}
+        <div className="text-center mb-16 md:mb-20">
+          <div 
+            data-animate-id="header-badge"
+            className={`inline-flex items-center gap-2 bg-background/10 backdrop-blur-sm px-6 py-3 rounded-full border border-primary/10 mb-6 transition-all duration-700 ease-out ${
+              visibleElements.has('header-badge') 
+                ? 'opacity-100 translate-y-0 scale-100' 
+                : 'opacity-0 translate-y-10 scale-95'
+            }`}
+          >
+            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            <p className="font-sans text-sm tracking-[0.3em] uppercase text-primary font-medium">
+              Investment in Beauty
+            </p>
+            <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+          </div>
+          
+          <h2 
+            data-animate-id="title"
+            className={`font-serif text-4xl md:text-6xl text-foreground font-light mb-6 transition-all duration-800 ease-out delay-100 ${
+              visibleElements.has('title') 
+                ? 'opacity-100 translate-y-0' 
+                : 'opacity-0 translate-y-8'
+            }`}
+          >
+            Choose Your <span className="font-medium italic text-primary/90">Perfect</span> Package
           </h2>
-          <div className={`w-16 h-0.5 gradient-gold mx-auto mt-4 transition-all duration-500 ease-out delay-150 ${isVisible ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'}`} />
-          <p className={`font-sans text-sm text-muted-foreground mt-4 max-w-2xl mx-auto transition-all duration-600 ease-out delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-            Choose the perfect package for your special day. All packages include premium products and expert artistry.
-          </p>
+          
+          <div 
+            data-animate-id="underline"
+            className={`w-32 h-1 bg-gradient-to-r from-transparent via-primary/60 to-transparent mx-auto transition-all duration-900 ease-out delay-200 ${
+              visibleElements.has('underline') 
+                ? 'opacity-100 scale-x-100' 
+                : 'opacity-0 scale-x-0'
+            }`}
+          />
         </div>
 
-        {/* Pricing Cards - Two cards centered */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto mb-12">
+        {/* Main Pricing Cards */}
+        <div 
+          ref={cardsRef}
+          className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 max-w-5xl mx-auto mb-20"
+        >
           {packages.map((pkg, index) => {
             const Icon = pkg.icon;
             const isPremium = pkg.popular;
-            const isEssential = !isPremium;
-            
+            const cardId = `card-${index}`;
+            const isCardVisible = visibleElements.has(cardId);
+            const entranceDelay = index * 200;
+
             return (
               <div
                 key={pkg.name}
-                className={`relative transition-all duration-400 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}
-                style={{ transitionDelay: `${100 + index * 100}ms` }}
-                onMouseEnter={() => setHoveredCard(index)}
-                onMouseLeave={() => setHoveredCard(null)}
+                data-animate-id={cardId}
+                className={`relative transition-all duration-1000 ease-out ${
+                  isCardVisible 
+                    ? 'opacity-100 translate-y-0' 
+                    : `opacity-0 ${index === 0 ? '-translate-x-20' : 'translate-x-20'}`
+                }`}
+                style={{ transitionDelay: `${entranceDelay}ms` }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-8px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
               >
-                {/* Glow effects for both packages */}
-                <>
-                  {/* Outer glow ring */}
-                  <div className={`absolute -inset-4 bg-gradient-to-r ${pkg.glowColor} rounded-2xl blur-xl opacity-60 animate-premium-glow`}></div>
-                  
-                  {/* Pulsing inner glow */}
-                  <div className="absolute -inset-3 bg-gradient-to-r from-transparent via-white/5 to-transparent rounded-2xl blur-lg animate-premium-pulse"></div>
-                  
-                  {/* Floating particles */}
-                  <div className="absolute -inset-4 overflow-hidden">
-                    {[...Array(6)].map((_, i) => (
-                      <div
-                        key={i}
-                        className={`absolute w-1.5 h-1.5 rounded-full animate-premium-particle ${isPremium ? 'bg-amber-300' : 'bg-blue-300'}`}
-                        style={{
-                          top: `${Math.random() * 100}%`,
-                          left: `${Math.random() * 100}%`,
-                          animationDelay: `${i * 0.5}s`,
-                        }}
-                      />
-                    ))}
-                  </div>
-                  
-                  {/* Corner accents */}
-                  <div className={`absolute -top-2 -left-2 w-4 h-4 rounded-full blur-sm opacity-70 animate-pulse ${isPremium ? 'bg-gradient-to-br from-amber-400 to-amber-300' : 'bg-gradient-to-br from-blue-400 to-indigo-300'}`}></div>
-                  <div className={`absolute -top-2 -right-2 w-4 h-4 rounded-full blur-sm opacity-70 animate-pulse delay-300 ${isPremium ? 'bg-gradient-to-br from-amber-400 to-amber-300' : 'bg-gradient-to-br from-blue-400 to-indigo-300'}`}></div>
-                  <div className={`absolute -bottom-2 -left-2 w-4 h-4 rounded-full blur-sm opacity-70 animate-pulse delay-600 ${isPremium ? 'bg-gradient-to-br from-amber-400 to-amber-300' : 'bg-gradient-to-br from-blue-400 to-indigo-300'}`}></div>
-                  <div className={`absolute -bottom-2 -right-2 w-4 h-4 rounded-full blur-sm opacity-70 animate-pulse delay-900 ${isPremium ? 'bg-gradient-to-br from-amber-400 to-amber-300' : 'bg-gradient-to-br from-blue-400 to-indigo-300'}`}></div>
-                </>
+                {/* Card glow appears on scroll */}
+                <div 
+                  className={`absolute -inset-4 ${pkg.glowColor} rounded-2xl blur-xl transition-all duration-1000 ease-out ${
+                    isCardVisible ? 'opacity-60 scale-100' : 'opacity-0 scale-95'
+                  }`}
+                  style={{ transitionDelay: `${entranceDelay + 100}ms` }}
+                />
 
-                {/* Highlight Badge with glow */}
-                <div className="absolute -top-5 left-1/2 -translate-x-1/2 z-30">
+                {/* Highlight Badge */}
+                <div 
+                  data-animate-id={`badge-${index}`}
+                  className={`absolute -top-5 left-1/2 -translate-x-1/2 z-30 transition-all duration-700 ease-out ${
+                    visibleElements.has(`badge-${index}`)
+                      ? 'opacity-100 translate-y-0 scale-100'
+                      : 'opacity-0 translate-y-10 scale-95'
+                  }`}
+                  style={{ transitionDelay: `${entranceDelay + 300}ms` }}
+                >
                   <div className={`
-                    px-6 py-3 rounded-full text-xs uppercase tracking-widest font-sans font-bold backdrop-blur-sm
-                    transition-all duration-300 ease-out relative overflow-hidden
+                    px-6 py-3 rounded-full text-sm uppercase tracking-widest font-sans font-bold backdrop-blur-sm
+                    relative overflow-hidden
                     ${isPremium 
-                      ? 'bg-gradient-to-r from-amber-600 to-amber-500 text-white shadow-lg shadow-amber-500/40' 
-                      : 'bg-gradient-to-r from-blue-600 to-indigo-500 text-white shadow-lg shadow-blue-500/40'
+                      ? 'bg-gradient-to-r from-amber-600 to-amber-500 text-white shadow-lg shadow-amber-500/50' 
+                      : 'bg-gradient-to-r from-blue-600 to-indigo-500 text-white shadow-lg shadow-blue-500/50'
                     }
-                    ${hoveredCard === index ? 'scale-105 shadow-xl' : 'scale-100'}
                   `}>
-                    <div className={`absolute inset-0 animate-premium-shine ${isPremium ? 'bg-gradient-to-r from-amber-500/20 via-amber-400/30 to-amber-500/20' : 'bg-gradient-to-r from-blue-500/20 via-indigo-400/30 to-blue-500/20'}`}></div>
-                    <div className={`absolute -inset-1 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${isPremium ? 'bg-gradient-to-r from-amber-400/20 to-amber-300/20' : 'bg-gradient-to-r from-blue-400/20 to-indigo-300/20'}`}></div>
                     <span className="relative z-10">{pkg.highlight}</span>
                   </div>
                 </div>
 
                 {/* Card */}
                 <div className={`
-                  relative rounded-2xl border-2 overflow-hidden h-full group
+                  relative rounded-2xl border-2 overflow-hidden h-full
                   bg-gradient-to-br ${isPremium 
-                    ? 'from-amber-50 via-background to-amber-50/90 border-amber-300/60 shadow-2xl shadow-amber-500/30' 
-                    : 'from-blue-50 via-background to-indigo-50/90 border-blue-300/60 shadow-2xl shadow-blue-500/30'
+                    ? 'from-amber-50 via-background to-amber-50/90 border-amber-300/60 shadow-xl shadow-amber-500/20' 
+                    : 'from-blue-50 via-background to-indigo-50/90 border-blue-300/60 shadow-xl shadow-blue-500/20'
                   }
-                  pt-8 pb-6 transition-all duration-400 ease-out
-                  ${hoveredCard === index ? (isPremium ? 'shadow-3xl shadow-amber-500/40 -translate-y-4 scale-105' : 'shadow-3xl shadow-blue-500/40 -translate-y-4 scale-105') : ''}
+                  pt-12 pb-8 transition-all duration-300 ease-out backdrop-blur-sm
                 `}>
-                  {/* Animated border glow */}
-                  <div className={`absolute inset-0 rounded-2xl border-2 border-transparent bg-gradient-to-r ${pkg.glowColor} bg-clip-border -m-1 animate-premium-border`}></div>
-
-                  {/* Shine effect on hover */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-out"></div>
-
-                  <div className="p-6 md:p-8 relative">
-                    {/* Icon with glow effect */}
-                    <div className="text-center mb-6">
+                  <div className="p-8 relative">
+                    {/* Icon */}
+                    <div 
+                      data-animate-id={`icon-${index}`}
+                      className={`text-center mb-8 transition-all duration-700 ease-out ${
+                        visibleElements.has(`icon-${index}`)
+                          ? 'opacity-100 translate-y-0 scale-100'
+                          : 'opacity-0 translate-y-10 scale-90'
+                      }`}
+                      style={{ transitionDelay: `${entranceDelay + 400}ms` }}
+                    >
                       <div className={`
-                        relative mx-auto rounded-full flex items-center justify-center mb-4
+                        relative mx-auto rounded-full flex items-center justify-center mb-6
                         w-20 h-20
-                        transition-all duration-400 ease-out
                         ${isPremium 
                           ? 'bg-gradient-to-br from-amber-100 to-amber-50 border-2 border-amber-300 shadow-lg shadow-amber-400/30' 
                           : 'bg-gradient-to-br from-blue-100 to-indigo-50 border-2 border-blue-300 shadow-lg shadow-blue-400/30'
                         }
-                        group-hover:scale-110
                       `}>
-                        <div className={`absolute inset-0 rounded-full blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${isPremium ? 'bg-amber-300/20' : 'bg-blue-300/20'}`}></div>
-                        <div className={`absolute -inset-2 blur-sm animate-pulse ${isPremium ? 'bg-gradient-to-r from-amber-400/10 to-amber-300/10' : 'bg-gradient-to-r from-blue-400/10 to-indigo-300/10'}`}></div>
-                        <Icon className={`transition-transform duration-400 ease-out group-hover:scale-110 ${isPremium ? 'w-10 h-10 text-amber-600 drop-shadow-sm' : 'w-10 h-10 text-blue-600 drop-shadow-sm'}`} />
+                        <Icon className={`w-10 h-10 ${isPremium ? 'text-amber-600' : 'text-blue-600'}`} />
                       </div>
                       
-                      <h3 className={`font-serif mb-2 transition-colors duration-300 relative ${isPremium ? 'text-2xl md:text-3xl text-amber-700' : 'text-2xl md:text-3xl text-blue-700'}`}>
+                      <h3 className={`font-serif text-2xl md:text-3xl mb-3 ${isPremium ? 'text-amber-700' : 'text-blue-700'}`}>
                         {pkg.name}
-                        <Sparkles className={`absolute -top-2 -right-4 w-4 h-4 animate-sparkle ${isPremium ? 'text-amber-500' : 'text-blue-500'}`} />
                       </h3>
                       <p className={`font-sans text-sm ${isPremium ? 'text-amber-600/80' : 'text-blue-600/80'}`}>
                         {pkg.description}
                       </p>
                     </div>
 
-                    {/* Price with glowing effect */}
-                    <div className="text-center mb-8 relative">
-                      <div className={`inline-block transition-all duration-400 ease-out group-hover:scale-110 animate-premium-price`}>
-                        <span className={`
-                          font-serif block relative
-                          ${isPremium 
-                            ? 'text-4xl md:text-6xl bg-gradient-to-b from-amber-600 via-amber-700 to-amber-800 bg-clip-text text-transparent drop-shadow-sm' 
-                            : 'text-4xl md:text-6xl bg-gradient-to-b from-blue-600 via-indigo-700 to-purple-800 bg-clip-text text-transparent drop-shadow-sm'
-                          }
-                        `}>
-                          {pkg.price}
-                          <div className={`absolute -inset-4 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 ${isPremium ? 'bg-gradient-to-r from-amber-400/10 via-amber-300/15 to-amber-400/10' : 'bg-gradient-to-r from-blue-400/10 via-indigo-300/15 to-blue-400/10'}`}></div>
-                        </span>
-                      </div>
+                    {/* Price */}
+                    <div 
+                      data-animate-id={`price-${index}`}
+                      className={`text-center mb-10 transition-all duration-700 ease-out ${
+                        visibleElements.has(`price-${index}`)
+                          ? 'opacity-100 translate-y-0 scale-100'
+                          : 'opacity-0 translate-y-8 scale-95'
+                      }`}
+                      style={{ transitionDelay: `${entranceDelay + 500}ms` }}
+                    >
+                      <span className={`
+                        font-serif block relative text-4xl md:text-6xl
+                        ${isPremium 
+                          ? 'bg-gradient-to-b from-amber-600 via-amber-700 to-amber-800 bg-clip-text text-transparent' 
+                          : 'bg-gradient-to-b from-blue-600 via-indigo-700 to-purple-800 bg-clip-text text-transparent'
+                        }
+                      `}>
+                        {pkg.price}
+                      </span>
                     </div>
 
-                    {/* Features */}
-                    <ul className="space-y-3 mb-8">
-                      {pkg.features.map((feature, i) => (
-                        <li 
-                          key={i}
-                          className="flex items-start gap-3 group/feature"
-                          style={{
-                            opacity: isVisible ? 1 : 0,
-                            transform: isVisible ? 'translateX(0)' : 'translateX(-12px)',
-                            transition: `opacity 0.4s ease-out ${150 + i * 40}ms, transform 0.4s ease-out ${150 + i * 40}ms`
-                          }}
-                        >
-                          <div className="relative">
-                            <div className={`absolute inset-0 rounded-full scale-0 group-hover/feature:scale-100 transition-transform duration-300 ${isPremium ? 'bg-amber-300/20' : 'bg-blue-300/20'}`}></div>
-                            <Check className={`relative w-5 h-5 mt-0.5 flex-shrink-0 transition-all duration-300 group-hover/feature:scale-110 ${isPremium ? 'text-amber-600 drop-shadow-sm' : 'text-blue-600 drop-shadow-sm'}`} />
-                          </div>
-                          <span className={`font-sans text-sm transition-colors duration-300 ${isPremium ? 'text-amber-700/90' : 'text-blue-700/90'}`}>
-                            {feature}
-                          </span>
-                        </li>
-                      ))}
+                    {/* Features - Staggered */}
+                    <ul className="space-y-4 mb-10">
+                      {pkg.features.map((feature, i) => {
+                        const featureId = `feature-${index}-${i}`;
+                        const isFeatureVisible = visibleElements.has(featureId);
+                        
+                        return (
+                          <li 
+                            key={i}
+                            data-animate-id={featureId}
+                            className={`flex items-start gap-3 transition-all duration-500 ease-out ${
+                              isFeatureVisible
+                                ? 'opacity-100 translate-x-0'
+                                : 'opacity-0 -translate-x-4'
+                            }`}
+                            style={{ transitionDelay: `${entranceDelay + 600 + (i * 60)}ms` }}
+                          >
+                            <Check className={`w-5 h-5 mt-0.5 flex-shrink-0 ${isPremium ? 'text-amber-600' : 'text-blue-600'}`} />
+                            <span className={`font-sans text-sm ${isPremium ? 'text-amber-700/90' : 'text-blue-700/90'}`}>
+                              {feature}
+                            </span>
+                          </li>
+                        );
+                      })}
                     </ul>
 
-                    {/* Button with enhanced glow */}
-                    <Button
-                      onClick={() => handleBookClick(pkg.name, pkg.price)}
-                      className={`
-                        w-full h-14 font-sans text-sm uppercase tracking-widest font-bold
-                        relative overflow-hidden transition-all duration-300 ease-out group/button
-                        ${isPremium 
-                          ? 'bg-gradient-to-r from-amber-600 to-amber-500 text-white shadow-xl shadow-amber-500/40 hover:shadow-2xl hover:shadow-amber-500/60 animate-premium-button' 
-                          : 'bg-gradient-to-r from-blue-600 to-indigo-500 text-white shadow-xl shadow-blue-500/40 hover:shadow-2xl hover:shadow-blue-500/60 animate-premium-button'
-                        }
-                        hover:scale-105 active:scale-98
-                      `}
+                    {/* Button */}
+                    <div 
+                      data-animate-id={`button-${index}`}
+                      className={`transition-all duration-700 ease-out ${
+                        visibleElements.has(`button-${index}`)
+                          ? 'opacity-100 translate-y-0'
+                          : 'opacity-0 translate-y-8'
+                      }`}
+                      style={{ transitionDelay: `${entranceDelay + 1000}ms` }}
                     >
-                      {/* Button shine effect */}
-                      <span className="absolute inset-0 bg-white/30 translate-x-[-100%] group-hover/button:translate-x-[100%] transition-transform duration-500 ease-out"></span>
-                      
-                      {/* Button glow effect */}
-                      <>
-                        <div className={`absolute -inset-1 rounded-lg blur-sm opacity-0 group-hover/button:opacity-100 transition-opacity duration-500 ${isPremium ? 'bg-gradient-to-r from-amber-400/30 to-amber-300/30' : 'bg-gradient-to-r from-blue-400/30 to-indigo-300/30'}`}></div>
-                        <Sparkles className={`absolute -top-1 -left-1 w-3 h-3 text-white/70 animate-sparkle ${isPremium ? '' : 'text-blue-200'}`} />
-                        <Sparkles className={`absolute -top-1 -right-1 w-3 h-3 text-white/70 animate-sparkle delay-300 ${isPremium ? '' : 'text-blue-200'}`} />
-                      </>
-                      
-                      <span className="relative flex items-center justify-center gap-2">
-                        <span>Book This Package</span>
-                        <svg className="w-4 h-4 opacity-0 group-hover/button:opacity-100 translate-x-0 group-hover/button:translate-x-1 transition-all duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                        </svg>
-                      </span>
-                    </Button>
+                      <Button
+                        onClick={() => handleBookClick(pkg.name, pkg.price)}
+                        className={`
+                          w-full h-14 font-sans text-sm uppercase tracking-widest font-bold
+                          relative overflow-hidden transition-all duration-300 ease-out
+                          ${isPremium 
+                            ? 'bg-gradient-to-r from-amber-600 to-amber-500 text-white shadow-lg shadow-amber-500/40 hover:shadow-xl hover:shadow-amber-500/60' 
+                            : 'bg-gradient-to-r from-blue-600 to-indigo-500 text-white shadow-lg shadow-blue-500/40 hover:shadow-xl hover:shadow-blue-500/60'
+                          }
+                          hover:scale-105 active:scale-95
+                        `}
+                      >
+                        <span className="relative flex items-center justify-center gap-2">
+                          <span>Book This Package</span>
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                          </svg>
+                        </span>
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -284,37 +312,53 @@ const PricingSection = () => {
           })}
         </div>
 
-        {/* Add-ons - Faster entrance */}
-        <div className={`max-w-4xl mx-auto transition-all duration-600 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`} style={{ transitionDelay: '400ms' }}>
-          <div className="text-center mb-8">
-            <h3 className="font-serif text-2xl text-foreground mb-3">Additional Services</h3>
+        {/* Add-ons Section */}
+        <div 
+          ref={addOnsRef}
+          data-animate-id="addons-title"
+          className={`max-w-5xl mx-auto transition-all duration-700 ease-out mb-12 ${
+            visibleElements.has('addons-title')
+              ? 'opacity-100 translate-y-0'
+              : 'opacity-0 translate-y-8'
+          }`}
+        >
+          <div className="text-center mb-12">
+            <h3 className="font-serif text-3xl text-foreground mb-4">Enhance Your Experience</h3>
             <p className="font-sans text-sm text-muted-foreground max-w-2xl mx-auto">
-              Customize your experience with these premium add-ons
+              Customize your bridal journey with these exclusive add-ons
             </p>
           </div>
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {addOns.map((addon, index) => {
               const Icon = addon.icon;
+              const addonId = `addon-${index}`;
+              const isAddonVisible = visibleElements.has(addonId);
+              
               return (
                 <div
                   key={index}
+                  data-animate-id={addonId}
                   className={`
-                    flex items-center justify-between p-5 bg-background/80 backdrop-blur-sm rounded-xl border border-border/30
-                    transition-all duration-300 ease-out hover:-translate-y-1 hover:border-primary/40 hover:shadow-md
-                    ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}
+                    flex items-center justify-between p-6 bg-gradient-to-br from-background/90 via-background/80 to-background/90 
+                    backdrop-blur-sm rounded-xl border border-border/30
+                    transition-all duration-500 ease-out hover:-translate-y-2 hover:border-primary/40 hover:shadow-lg
+                    ${isAddonVisible
+                      ? 'opacity-100 translate-y-0'
+                      : 'opacity-0 translate-y-6'
+                    }
                   `}
-                  style={{ transitionDelay: `${500 + index * 60}ms` }}
+                  style={{ transitionDelay: `${200 + (index * 80)}ms` }}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center transition-colors duration-300 group-hover:bg-primary/20">
-                      <Icon className="w-5 h-5 text-primary" />
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center transition-all duration-300 group-hover:scale-110">
+                      <Icon className="w-6 h-6 text-primary transition-transform duration-300 group-hover:rotate-12" />
                     </div>
-                    <span className="font-sans text-sm font-medium text-foreground transition-colors duration-300 group-hover:text-primary">
+                    <span className="font-sans text-sm font-medium text-foreground">
                       {addon.name}
                     </span>
                   </div>
-                  <span className="font-serif text-sm text-primary font-bold transition-transform duration-300 group-hover:scale-110">
+                  <span className="font-serif text-base text-primary font-bold">
                     {addon.price}
                   </span>
                 </div>
@@ -323,150 +367,46 @@ const PricingSection = () => {
           </div>
         </div>
 
-        {/* Footer Note */}
-        <div className={`mt-12 text-center transition-all duration-600 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`} style={{ transitionDelay: '800ms' }}>
-          <div className="inline-flex flex-col items-center gap-4 bg-background/50 backdrop-blur-sm px-8 py-6 rounded-2xl border border-border/30 max-w-2xl">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-              <p className="font-sans text-sm text-muted-foreground">* All packages include premium international brand products.</p>
+        {/* Footer Notes */}
+        <div 
+          data-animate-id="footer-notes"
+          className={`max-w-2xl mx-auto transition-all duration-700 ease-out ${
+            visibleElements.has('footer-notes')
+              ? 'opacity-100 translate-y-0'
+              : 'opacity-0 translate-y-8'
+          }`}
+          style={{ transitionDelay: '600ms' }}
+        >
+          <div className="inline-flex flex-col items-center gap-4 bg-background/50 backdrop-blur-sm px-8 py-6 rounded-2xl border border-border/30 w-full">
+            <div className="flex items-center gap-2 w-full">
+              <div className="w-2 h-2 rounded-full bg-primary animate-pulse flex-shrink-0" />
+              <p className="font-sans text-sm text-muted-foreground">
+                * All packages include premium international brand products.
+              </p>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-primary animate-pulse delay-150"></div>
-              <p className="font-sans text-sm text-muted-foreground">* Travel charges will be applied based on the service location.</p>
+            <div className="flex items-center gap-2 w-full">
+              <div className="w-2 h-2 rounded-full bg-primary animate-pulse delay-150 flex-shrink-0" />
+              <p className="font-sans text-sm text-muted-foreground">
+                * Travel charges will be applied based on the service location.
+              </p>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-primary animate-pulse delay-300"></div>
-              <p className="font-sans text-sm text-muted-foreground">* Contact us for customized quotes and special requests.</p>
+            <div className="flex items-center gap-2 w-full">
+              <div className="w-2 h-2 rounded-full bg-primary animate-pulse delay-300 flex-shrink-0" />
+              <p className="font-sans text-sm text-muted-foreground">
+                * Contact us for customized quotes and special requests.
+              </p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Enhanced CSS Animations for glowing effects */}
       <style>{`
-        @keyframes premiumGlow {
-          0%, 100% { 
-            opacity: 0.4;
-            transform: scale(1);
-          }
-          50% { 
-            opacity: 0.7;
-            transform: scale(1.02);
-          }
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.6; }
         }
-        
-        @keyframes premiumPulse {
-          0%, 100% { 
-            opacity: 0.2;
-          }
-          50% { 
-            opacity: 0.4;
-          }
-        }
-        
-        @keyframes premiumParticle {
-          0% {
-            transform: translateY(0) scale(1);
-            opacity: 0;
-          }
-          10% {
-            opacity: 1;
-          }
-          90% {
-            opacity: 1;
-          }
-          100% {
-            transform: translateY(-30px) scale(1.5);
-            opacity: 0;
-          }
-        }
-        
-        @keyframes premiumBorder {
-          0%, 100% {
-            opacity: 0.3;
-          }
-          50% {
-            opacity: 0.6;
-          }
-        }
-        
-        @keyframes premiumPrice {
-          0%, 100% {
-            transform: scale(1);
-          }
-          50% {
-            transform: scale(1.05);
-          }
-        }
-        
-        @keyframes premiumButton {
-          0%, 100% {
-            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
-          }
-          50% {
-            box-shadow: 0 15px 35px rgba(59, 130, 246, 0.6);
-          }
-        }
-        
-        @keyframes premiumButtonAmber {
-          0%, 100% {
-            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4);
-          }
-          50% {
-            box-shadow: 0 15px 35px rgba(245, 158, 11, 0.6);
-          }
-        }
-        
-        @keyframes sparkle {
-          0%, 100% {
-            opacity: 0;
-            transform: scale(0.5) rotate(0deg);
-          }
-          50% {
-            opacity: 1;
-            transform: scale(1.2) rotate(180deg);
-          }
-        }
-        
-        @keyframes premiumShine {
-          0% {
-            transform: translateX(-100%) translateY(-100%) rotate(45deg);
-          }
-          100% {
-            transform: translateX(100%) translateY(100%) rotate(45deg);
-          }
-        }
-        
-        .animate-premium-glow {
-          animation: premiumGlow 3s ease-in-out infinite;
-        }
-        
-        .animate-premium-pulse {
-          animation: premiumPulse 2s ease-in-out infinite;
-        }
-        
-        .animate-premium-particle {
-          animation: premiumParticle 3s ease-in-out infinite;
-        }
-        
-        .animate-premium-border {
-          animation: premiumBorder 2s ease-in-out infinite;
-        }
-        
-        .animate-premium-price {
-          animation: premiumPrice 3s ease-in-out infinite;
-        }
-        
-        .animate-premium-button {
-          animation: premiumButton 2s ease-in-out infinite;
-        }
-        
-        .animate-sparkle {
-          animation: sparkle 2s ease-in-out infinite;
-        }
-        
-        .animate-premium-shine {
-          animation: premiumShine 2s ease-in-out infinite;
+        .animate-pulse {
+          animation: pulse 2s ease-in-out infinite;
         }
       `}</style>
     </section>

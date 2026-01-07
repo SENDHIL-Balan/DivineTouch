@@ -42,6 +42,9 @@ const portfolioCategories: PortfolioCategory[] = [
 const PortfolioSection = () => {
   const sectionRef = useRef<HTMLElement | null>(null);
   const lightboxRef = useRef<HTMLDivElement>(null);
+  const categoryRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const subCategoryRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const imageRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const [isVisible, setIsVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<PortfolioCategory | null>(null);
@@ -73,6 +76,91 @@ const PortfolioSection = () => {
     return () => observer.disconnect();
   }, []);
 
+  // Animation for main categories on scroll
+  useEffect(() => {
+    if (!selectedCategory) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+              const element = entry.target as HTMLElement;
+              setTimeout(() => {
+                element.style.opacity = '1';
+                element.style.transform = 'translateY(0) scale(1)';
+              }, index * 100);
+            }
+          });
+        },
+        { threshold: 0.2 }
+      );
+
+      categoryRefs.current.forEach(ref => {
+        if (ref) {
+          observer.observe(ref);
+        }
+      });
+
+      return () => observer.disconnect();
+    }
+  }, [selectedCategory]);
+
+  // Animation for subcategories on scroll
+  useEffect(() => {
+    if (selectedCategory?.subCategories && !selectedSubCategory) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+              const element = entry.target as HTMLElement;
+              setTimeout(() => {
+                element.style.opacity = '1';
+                element.style.transform = 'translateY(0) scale(1)';
+              }, index * 80);
+            }
+          });
+        },
+        { threshold: 0.2 }
+      );
+
+      subCategoryRefs.current.forEach(ref => {
+        if (ref) {
+          observer.observe(ref);
+        }
+      });
+
+      return () => observer.disconnect();
+    }
+  }, [selectedCategory, selectedSubCategory]);
+
+  // Animation for gallery images on scroll
+  useEffect(() => {
+    const showGallery = selectedCategory && (!selectedCategory.subCategories || selectedSubCategory);
+    if (showGallery) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+              const element = entry.target as HTMLElement;
+              setTimeout(() => {
+                element.style.opacity = '1';
+                element.style.transform = 'translateY(0) scale(1)';
+              }, index * 60);
+            }
+          });
+        },
+        { threshold: 0.2 }
+      );
+
+      imageRefs.current.forEach(ref => {
+        if (ref) {
+          observer.observe(ref);
+        }
+      });
+
+      return () => observer.disconnect();
+    }
+  }, [selectedCategory, selectedSubCategory]);
+
   // Preload images for current gallery
   useEffect(() => {
     const preloadImages = () => {
@@ -101,6 +189,15 @@ const PortfolioSection = () => {
     setSelectedCategory(category);
     setSelectedSubCategory(null);
     
+    // Reset animations
+    categoryRefs.current.forEach(ref => {
+      if (ref) {
+        ref.style.opacity = '0';
+        ref.style.transform = 'translateY(30px) scale(0.95)';
+        ref.style.transition = 'none';
+      }
+    });
+    
     // Scroll to top of section
     setTimeout(() => {
       sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -111,6 +208,16 @@ const PortfolioSection = () => {
   const handleSubCategoryClick = (subCat: SubCategory) => {
     setIsLoading(true);
     setSelectedSubCategory(subCat);
+    
+    // Reset animations
+    subCategoryRefs.current.forEach(ref => {
+      if (ref) {
+        ref.style.opacity = '0';
+        ref.style.transform = 'translateY(30px) scale(0.95)';
+        ref.style.transition = 'none';
+      }
+    });
+    
     setTimeout(() => setIsLoading(false), 300);
   };
 
@@ -320,18 +427,24 @@ const PortfolioSection = () => {
 
   const renderMainCategories = () => (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-6xl mx-auto">
-      {portfolioCategories.map((category) => (
+      {portfolioCategories.map((category, index) => (
         <button
           key={category.id}
+          ref={(el) => categoryRefs.current[index] = el}
           onClick={() => handleCategoryClick(category)}
-          className="group relative rounded-lg overflow-hidden bg-secondary aspect-[4/5] shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+          className="group relative rounded-lg overflow-hidden bg-secondary aspect-[4/5] shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-1"
           onMouseEnter={() => setHoveredImage(category.id)}
           onMouseLeave={() => setHoveredImage(null)}
+          style={{
+            opacity: 0,
+            transform: 'translateY(30px) scale(0.95)',
+            transition: 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s cubic-bezier(0.4, 0, 0.2, 1)',
+          }}
         >
           <img
             src={`${category.folder}/cover.jpg`}
             alt={category.title}
-            className="absolute inset-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-110"
+            className="absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
             loading="lazy"
             decoding="async"
           />
@@ -369,18 +482,24 @@ const PortfolioSection = () => {
 
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
-        {selectedCategory.subCategories.map((subCat) => (
+        {selectedCategory.subCategories.map((subCat, index) => (
           <button
             key={subCat.id}
+            ref={(el) => subCategoryRefs.current[index] = el}
             onClick={() => handleSubCategoryClick(subCat)}
-            className="group relative rounded-lg overflow-hidden bg-secondary aspect-[3/4] shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+            className="group relative rounded-lg overflow-hidden bg-secondary aspect-[3/4] shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-1"
             onMouseEnter={() => setHoveredImage(subCat.id)}
             onMouseLeave={() => setHoveredImage(null)}
+            style={{
+              opacity: 0,
+              transform: 'translateY(30px) scale(0.95)',
+              transition: 'opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+            }}
           >
             <img
               src={`${subCat.folder}/cover.jpg`}
               alt={subCat.title}
-              className="absolute inset-0 w-full h-full object-cover transition-all duration-500 group-hover:scale-110"
+              className="absolute inset-0 w-full h-full object-cover transition-all duration-700 group-hover:scale-110"
               loading="lazy"
               decoding="async"
             />
@@ -423,9 +542,15 @@ const PortfolioSection = () => {
           {images.map((image, index) => (
             <div
               key={image.id}
-              className="relative aspect-[3/4] overflow-hidden rounded-lg bg-secondary shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 group"
+              ref={(el) => imageRefs.current[index] = el}
+              className="relative aspect-[3/4] overflow-hidden rounded-lg bg-secondary shadow-lg hover:shadow-xl transition-all duration-500 hover:-translate-y-1 group"
               onMouseEnter={() => setHoveredImage(image.id)}
               onMouseLeave={() => setHoveredImage(null)}
+              style={{
+                opacity: 0,
+                transform: 'translateY(30px) scale(0.95)',
+                transition: 'opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
+              }}
             >
               <button
                 onClick={() => openLightbox(image.src)}

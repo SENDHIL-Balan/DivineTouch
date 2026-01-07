@@ -23,158 +23,190 @@ const HeroSection = () => {
   };
 
   return (
-    <section className="relative min-h-[70vh] md:min-h-[85vh] lg:min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0">
         <img
           src="/assets/hero/hero-main.webp"
           alt="Luxury Bridal Makeup"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-center"
           loading="eager"
           decoding="async"
         />
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-foreground/80 via-foreground/60 to-foreground/80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/60" />
       </div>
 
-      {/* Floating Elements */}
-      <div className="absolute top-8 left-8 hidden lg:block animate-float-slow">
-        <div className="w-16 h-16 rounded-full bg-primary/10 backdrop-blur-sm flex items-center justify-center border border-primary/20">
-          <Sparkles className="w-6 h-6 text-primary" />
+      {/* Randomly blinking sparkles - lightweight, pure CSS */}
+      {[...Array(12)].map((_, i) => (
+        <div
+          key={i}
+          className={`absolute w-1 h-1 bg-primary/80 rounded-full sparkle sparkle-${i + 1}`}
+          style={{
+            top: `${10 + (i % 4) * 25}%`,
+            left: `${5 + (i % 5) * 20}%`,
+            animationDelay: `${i * 0.4}s`,
+          }}
+        />
+      ))}
+
+      {/* Floating decorative elements */}
+      <div className="absolute top-12 left-12 hidden lg:block animate-float-slow opacity-60">
+        <div className="w-20 h-20 rounded-full bg-primary/5 backdrop-blur-md flex items-center justify-center border border-primary/10">
+          <Sparkles className="w-8 h-8 text-primary/80" />
         </div>
       </div>
 
-      <div className="absolute top-8 right-8 hidden lg:block animate-float-slower">
-        <div className="w-14 h-14 rounded-full bg-primary/10 backdrop-blur-sm flex items-center justify-center border border-primary/20">
-          <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+      <div className="absolute top-32 right-12 hidden lg:block animate-float-slower opacity-60">
+        <div className="w-16 h-16 rounded-full bg-primary/5 backdrop-blur-md flex items-center justify-center border border-primary/10">
+          <div className="w-3 h-3 rounded-full bg-primary/80 animate-pulse" />
         </div>
       </div>
 
       {/* Content */}
-      <div className="relative z-10 text-center px-6 max-w-4xl mx-auto pt-14 md:pt-0">
-        {/* Decorative Top Text */}
+      <div className="relative z-10 text-center px-6 max-w-5xl mx-auto">
+        {/* Top badge */}
         <div
-          className={`mb-4 transition-all duration-700 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-8'
+          className={`mb-8 transition-all duration-1000 ease-out ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
         >
-          <div className="inline-flex items-center gap-2 bg-background/10 backdrop-blur-sm px-4 py-2 rounded-full border border-background/20 mb-4">
+          <div className="inline-flex items-center gap-3 bg-background/5 backdrop-blur-md px-6 py-3 rounded-full border border-background/10">
             <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            <span className="font-sans text-xs uppercase tracking-widest text-background/90">
+            <span className="font-sans text-sm uppercase tracking-widest text-background/90">
               Premium Bridal Makeover
             </span>
           </div>
         </div>
 
-        {/* Main Headline */}
+        {/* Headline */}
         <h1
-          className={`font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-background font-medium leading-tight mb-4 md:mb-6 transition-all duration-700 delay-100 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          className={`font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-background font-light leading-none mb-6 transition-all duration-1000 delay-200 ease-out ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
-          style={{ textShadow: '0 2px 30px rgba(0,0,0,0.6)' }}
+          style={{ textShadow: '0 4px 40px rgba(0,0,0,0.7)', letterSpacing: '-0.02em' }}
         >
           Experience Beauty
-          <span className="block text-transparent bg-clip-text gradient-gold mt-2">
+          <span className="block text-transparent bg-clip-text gradient-gold mt-4 text-6xl sm:text-7xl md:text-8xl lg:text-9xl sparkle-text">
             Redefined
           </span>
         </h1>
 
-        {/* Supporting Text */}
+        {/* Supporting text */}
         <p
-          className={`font-sans text-base md:text-lg text-background/90 max-w-2xl mx-auto leading-relaxed mb-6 md:mb-8 transition-all duration-700 delay-200 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          className={`font-sans text-lg md:text-xl lg:text-2xl text-background/90 max-w-3xl mx-auto leading-relaxed mb-12 transition-all duration-1000 delay-300 ease-out ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
         >
           Transform your special day with premium bridal makeup artistry, 
           crafted to enhance your natural beauty.
         </p>
 
-        {/* Stats Bar */}
+        {/* Stats */}
         <div
-          className={`flex flex-wrap justify-center gap-6 mb-8 md:mb-10 transition-all duration-700 delay-300 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          className={`flex justify-center items-center gap-12 md:gap-20 mb-16 transition-all duration-1000 delay-500 ease-out ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
         >
           {[
             { value: '150+', label: 'Happy Brides' },
             { value: '5+', label: 'Years Experience' },
-            
-          ].map((stat, index) => (
-            <div
-              key={index}
-              className="text-center px-4"
-            >
-              <div className="font-serif text-2xl md:text-3xl text-background font-bold">
+          ].map((stat, index, array) => (
+            <div key={index} className="relative text-center">
+              <div className="font-serif text-4xl md:text-5xl text-background font-medium">
                 {stat.value}
               </div>
-              <div className="font-sans text-xs uppercase tracking-widest text-background/70 mt-1">
+              <div className="font-sans text-sm uppercase tracking-widest text-background/70 mt-2">
                 {stat.label}
               </div>
+              {index < array.length - 1 && (
+                <div className="absolute right-[-24px] md:right-[-40px] top-1/2 -translate-y-1/2 w-px h-12 bg-background/20" />
+              )}
             </div>
           ))}
         </div>
 
-        {/* CTA Buttons */}
+        {/* CTAs */}
         <div
-          className={`flex flex-col sm:flex-row gap-4 justify-center transition-all duration-700 delay-400 ${
-            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+          className={`flex flex-col sm:flex-row gap-6 justify-center transition-all duration-1000 delay-700 ease-out ${
+            isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
         >
           <button
             onClick={scrollToBooking}
-            className="group inline-flex items-center justify-center gap-3 px-8 py-4 gradient-gold text-primary-foreground font-sans text-sm uppercase tracking-wide-luxury rounded-sm shadow-gold hover:shadow-elegant transition-all duration-300 active:scale-95 min-w-[200px]"
+            className="group relative inline-flex items-center justify-center gap-3 px-10 py-5 gradient-gold text-primary-foreground font-sans text-base uppercase tracking-wider rounded-none shadow-2xl hover:shadow-gold/50 transition-all duration-500 hover:-translate-y-1 active:scale-98 min-w-[240px] overflow-hidden"
           >
-            <Calendar className="w-5 h-5 group-hover:scale-110 transition-transform" />
+            <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+            <Calendar className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
             <span>Book Your Bridal Slot</span>
           </button>
 
           <button
             onClick={scrollToServices}
-            className="group inline-flex items-center justify-center gap-3 px-8 py-4 bg-background/20 backdrop-blur-sm text-background font-sans text-sm uppercase tracking-wide-luxury rounded-sm border border-background/30 hover:bg-background/30 hover:border-background/50 transition-all duration-300 active:scale-95 min-w-[200px]"
+            className="group inline-flex items-center justify-center gap-3 px-10 py-5 bg-transparent text-background font-sans text-base uppercase tracking-wider rounded-none border-2 border-background/40 hover:border-background/80 backdrop-blur-sm hover:bg-background/10 transition-all duration-500 hover:-translate-y-1 active:scale-98 min-w-[240px]"
           >
-            <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+            <Sparkles className="w-6 h-6 group-hover:rotate-12 transition-transform duration-300" />
             <span>View Services</span>
           </button>
         </div>
       </div>
 
-      {/* Scroll Indicator */}
+      {/* Scroll indicator */}
       <button
         onClick={scrollToServices}
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2 group animate-bounce-slow"
+        className="absolute bottom-10 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-4 group"
         aria-label="Scroll to services"
       >
-        <span className="font-sans text-xs text-background/70 uppercase tracking-widest group-hover:text-background transition-colors">
+        <span className="font-sans text-sm text-background/60 uppercase tracking-widest group-hover:text-background/90 transition-colors duration-300">
           Explore
         </span>
-        <div className="w-6 h-10 rounded-full border-2 border-background/40 flex justify-center pt-2 group-hover:border-background/60 transition-colors">
-          <ChevronDown className="w-4 h-4 text-background/60 group-hover:text-background/80 animate-pulse" />
+        <div className="w-8 h-14 rounded-full border border-background/30 flex justify-center items-start pt-3 group-hover:border-background/60 transition-colors duration-300">
+          <ChevronDown className="w-5 h-5 text-background/50 group-hover:text-background/80 animate-pulse" />
         </div>
       </button>
 
-      {/* Add CSS animations */}
+      {/* Fixed: Replaced <style jsx> with regular <style> to avoid TypeScript error */}
       <style>{`
+        @keyframes sparkle {
+          0%, 100% { opacity: 0; transform: scale(0); }
+          50% { opacity: 1; transform: scale(1); }
+        }
+        @keyframes sparkle-text {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.7; text-shadow: 0 0 20px #ffd700; }
+        }
+        .sparkle {
+          pointer-events: none;
+          animation: sparkle linear infinite;
+        }
+        .sparkle-text {
+          animation: sparkle-text 4s ease-in-out infinite;
+        }
+        .sparkle-1 { animation-duration: 3s; }
+        .sparkle-2 { animation-duration: 4.5s; }
+        .sparkle-3 { animation-duration: 3.8s; }
+        .sparkle-4 { animation-duration: 5s; }
+        .sparkle-5 { animation-duration: 2.8s; }
+        .sparkle-6 { animation-duration: 4.2s; }
+        .sparkle-7 { animation-duration: 3.4s; }
+        .sparkle-8 { animation-duration: 5.5s; }
+        .sparkle-9 { animation-duration: 3.2s; }
+        .sparkle-10 { animation-duration: 4.8s; }
+        .sparkle-11 { animation-duration: 3.6s; }
+        .sparkle-12 { animation-duration: 4.4s; }
+
         @keyframes float-slow {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(5deg); }
         }
         @keyframes float-slower {
           0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-15px); }
-        }
-        @keyframes bounce-slow {
-          0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-          40% { transform: translateY(-10px); }
-          60% { transform: translateY(-5px); }
+          50% { transform: translateY(-25px); }
         }
         .animate-float-slow {
-          animation: float-slow 6s ease-in-out infinite;
+          animation: float-slow 8s ease-in-out infinite;
         }
         .animate-float-slower {
-          animation: float-slower 8s ease-in-out infinite;
-        }
-        .animate-bounce-slow {
-          animation: bounce-slow 3s infinite;
+          animation: float-slower 10s ease-in-out infinite;
         }
       `}</style>
     </section>
